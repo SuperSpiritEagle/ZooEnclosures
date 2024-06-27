@@ -67,12 +67,15 @@ namespace ZooEnclosures
         private static int ReadInt(string message)
         {
             int result;
+
             Console.Write(message);
-            while (!int.TryParse(Console.ReadLine(), out result))
+
+            while (int.TryParse(Console.ReadLine(), out result) == false)
             {
                 Console.WriteLine("Некорректный ввод. Пожалуйста, введите число.");
                 Console.Write(message);
             }
+
             return result;
         }
     }
@@ -85,17 +88,20 @@ namespace ZooEnclosures
             Animal[] selectedAnimals = new Animal[count];
 
             int index = 0;
+
             foreach (var animal in animalList)
             {
                 if (animal.Species == species)
                 {
                     selectedAnimals[index++] = animal.Clone();
+
                     if (index == count)
                     {
                         break;
                     }
                 }
             }
+
             return selectedAnimals;
         }
     }
