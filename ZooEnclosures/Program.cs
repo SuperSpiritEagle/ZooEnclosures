@@ -18,10 +18,10 @@ namespace ZooEnclosures
                 new Animal("Волк", "Женский", "Вой")
             };
 
-            Enclosure lionEnclosure = new Enclosure("Львиный вольер", GetAnimalsBySpecies("Лев", animalList));
-            Enclosure tigerEnclosure = new Enclosure("Тигровый вольер", GetAnimalsBySpecies("Тигр", animalList));
-            Enclosure bearEnclosure = new Enclosure("Медвежий вольер", GetAnimalsBySpecies("Медведь", animalList));
-            Enclosure wolfEnclosure = new Enclosure("Волчий вольер", GetAnimalsBySpecies("Волк", animalList));
+            Enclosure lionEnclosure = new Enclosure("Львиный вольер", AnimalHelper.GetAnimalsBySpecies("Лев", animalList));
+            Enclosure tigerEnclosure = new Enclosure("Тигровый вольер", AnimalHelper.GetAnimalsBySpecies("Тигр", animalList));
+            Enclosure bearEnclosure = new Enclosure("Медвежий вольер", AnimalHelper.GetAnimalsBySpecies("Медведь", animalList));
+            Enclosure wolfEnclosure = new Enclosure("Волчий вольер", AnimalHelper.GetAnimalsBySpecies("Волк", animalList));
 
             Enclosure[] enclosures = { lionEnclosure, tigerEnclosure, bearEnclosure, wolfEnclosure };
 
@@ -38,24 +38,18 @@ namespace ZooEnclosures
                     Console.WriteLine($"{i + 1}. {enclosures[i].Name}");
                 }
 
-                Console.WriteLine($"{MenuConstants.Exit}. Выйти из программы");
+                Console.WriteLine($"{MenuConstants.EXIT}. Выйти из программы");
 
-                Console.Write("Введите номер вольера (или 0 для выхода): ");
-
-                if (!int.TryParse(Console.ReadLine(), out int choice))
-                {
-                    Console.WriteLine("Некорректный ввод. Пожалуйста, введите число.");
-                    continue;
-                }
+                int choice = ReadInt("Введите номер вольера (или 0 для выхода): ");
 
                 switch (choice)
                 {
-                    case MenuConstants.Exit:
+                    case MenuConstants.EXIT:
                         exit = true;
                         break;
 
                     default:
-                        if (choice >= MenuConstants.InitialChoice && choice <= enclosures.Length)
+                        if (choice >= MenuConstants.INITIAL_CHOICE && choice <= enclosures.Length)
                         {
                             enclosures[choice - 1].DisplayInfo();
                         }
@@ -70,9 +64,23 @@ namespace ZooEnclosures
             Console.WriteLine("Спасибо за посещение зоопарка! До свидания.");
         }
 
-        static Animal[] GetAnimalsBySpecies(string species, Animal[] animalList)
+        private static int ReadInt(string message)
         {
-            Random random = new Random();
+            int result;
+            Console.Write(message);
+            while (!int.TryParse(Console.ReadLine(), out result))
+            {
+                Console.WriteLine("Некорректный ввод. Пожалуйста, введите число.");
+                Console.Write(message);
+            }
+            return result;
+        }
+    }
+
+    static class AnimalHelper
+    {
+        public static Animal[] GetAnimalsBySpecies(string species, Animal[] animalList)
+        {
             int count = 2; // Number of animals per enclosure
             Animal[] selectedAnimals = new Animal[count];
 
@@ -94,42 +102,39 @@ namespace ZooEnclosures
 
     class Animal
     {
-        private string species;
-        private string gender;
-        private string sound;
+        private readonly string _species;
+        private readonly string _gender;
+        private readonly string _sound;
 
-        public string Species => species;
-        public string Gender => gender;
-        public string Sound => sound;
+        public string Species => _species;
+        public string Gender => _gender;
+        public string Sound => _sound;
 
         public Animal(string species, string gender, string sound)
         {
-            this.species = species;
-            this.gender = gender;
-            this.sound = sound;
+            _species = species;
+            _gender = gender;
+            _sound = sound;
         }
 
         public Animal Clone()
         {
-            return new Animal(this.species, this.gender, this.sound);
+            return new Animal(_species, _gender, _sound);
         }
     }
 
     class Enclosure
     {
-        private string name;
-        private int numberOfAnimals;
-        private Animal[] animals;
+        private readonly string _name;
+        private readonly Animal[] _animals;
 
-        public string Name => name;
-        public int NumberOfAnimals => numberOfAnimals;
-        public Animal[] Animals => animals;
+        public string Name => _name;
+        public int NumberOfAnimals => _animals.Length;
 
         public Enclosure(string name, Animal[] animals)
         {
-            this.name = name;
-            this.animals = animals;
-            this.numberOfAnimals = animals.Length;
+            _name = name;
+            _animals = animals;
         }
 
         public void DisplayInfo()
@@ -138,7 +143,7 @@ namespace ZooEnclosures
             Console.WriteLine($"Количество животных: {NumberOfAnimals}");
             Console.WriteLine("Животные:");
 
-            foreach (var animal in Animals)
+            foreach (var animal in _animals)
             {
                 Console.WriteLine($"- Вид: {animal.Species}, Пол: {animal.Gender}, Звук: {animal.Sound}");
             }
@@ -147,19 +152,22 @@ namespace ZooEnclosures
 
     class Zoo
     {
-        private Enclosure[] enclosures;
+        private readonly Enclosure[] _enclosures;
 
         public Zoo(Enclosure[] enclosures)
         {
-            this.enclosures = enclosures;
+            _enclosures = enclosures;
         }
 
-        public Enclosure[] Enclosures => enclosures;
+        public Enclosure[] GetEnclosures()
+        {
+            return (Enclosure[])_enclosures.Clone();
+        }
     }
 
     static class MenuConstants
     {
-        public const int Exit = 0;
-        public const int InitialChoice = 1;
+        public const int EXIT = 0;
+        public const int INITIAL_CHOICE = 1;
     }
 }
