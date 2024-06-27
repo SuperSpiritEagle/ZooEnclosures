@@ -27,9 +27,9 @@ namespace ZooEnclosures
 
             Zoo zoo = new Zoo(enclosures);
 
-            bool exit = false;
+            bool isExit = false;
 
-            while (exit == false)
+            while (isExit == false)
             {
                 Console.WriteLine("Добро пожаловать в зоопарк! Выберите вольер для просмотра:");
 
@@ -38,20 +38,20 @@ namespace ZooEnclosures
                     Console.WriteLine($"{i + 1}. {enclosures[i].Name}");
                 }
 
-                Console.WriteLine($"{MenuConstants.EXIT}. Выйти из программы");
+                Console.WriteLine($"{MenuConstants.Exit}. Выйти из программы");
 
                 int choice = ReadInt("Введите номер вольера (или 0 для выхода): ");
 
                 switch (choice)
                 {
-                    case MenuConstants.EXIT:
-                        exit = true;
+                    case MenuConstants.Exit:
+                        isExit = true;
                         break;
 
                     default:
-                        if (choice >= MenuConstants.INITIAL_CHOICE && choice <= enclosures.Length)
+                        if (choice >= MenuConstants.InitialChoice && choice <= enclosures.Length)
                         {
-                            enclosures[choice - 1].DisplayInfo();
+                            zoo.DisplayEnclosureInfo(choice - 1);
                         }
                         else
                         {
@@ -81,7 +81,7 @@ namespace ZooEnclosures
     {
         public static Animal[] GetAnimalsBySpecies(string species, Animal[] animalList)
         {
-            int count = 2; // Number of animals per enclosure
+            int count = 2;
             Animal[] selectedAnimals = new Animal[count];
 
             int index = 0;
@@ -102,39 +102,33 @@ namespace ZooEnclosures
 
     class Animal
     {
-        private readonly string _species;
-        private readonly string _gender;
-        private readonly string _sound;
-
-        public string Species => _species;
-        public string Gender => _gender;
-        public string Sound => _sound;
+        public string Species { get; }
+        public string Gender { get; }
+        public string Sound { get; }
 
         public Animal(string species, string gender, string sound)
         {
-            _species = species;
-            _gender = gender;
-            _sound = sound;
+            Species = species;
+            Gender = gender;
+            Sound = sound;
         }
 
         public Animal Clone()
         {
-            return new Animal(_species, _gender, _sound);
+            return new Animal(Species, Gender, Sound);
         }
     }
 
     class Enclosure
     {
-        private readonly string _name;
-        private readonly Animal[] _animals;
-
-        public string Name => _name;
-        public int NumberOfAnimals => _animals.Length;
+        public string Name { get; }
+        public int NumberOfAnimals => Animals.Length;
+        public Animal[] Animals { get; }
 
         public Enclosure(string name, Animal[] animals)
         {
-            _name = name;
-            _animals = animals;
+            Name = name;
+            Animals = animals;
         }
 
         public void DisplayInfo()
@@ -143,7 +137,7 @@ namespace ZooEnclosures
             Console.WriteLine($"Количество животных: {NumberOfAnimals}");
             Console.WriteLine("Животные:");
 
-            foreach (var animal in _animals)
+            foreach (var animal in Animals)
             {
                 Console.WriteLine($"- Вид: {animal.Species}, Пол: {animal.Gender}, Звук: {animal.Sound}");
             }
@@ -152,22 +146,22 @@ namespace ZooEnclosures
 
     class Zoo
     {
-        private readonly Enclosure[] _enclosures;
+        public Enclosure[] Enclosures { get; }
 
         public Zoo(Enclosure[] enclosures)
         {
-            _enclosures = enclosures;
+            Enclosures = enclosures;
         }
 
-        public Enclosure[] GetEnclosures()
+        public void DisplayEnclosureInfo(int index)
         {
-            return (Enclosure[])_enclosures.Clone();
+            Enclosures[index].DisplayInfo();
         }
     }
 
     static class MenuConstants
     {
-        public const int EXIT = 0;
-        public const int INITIAL_CHOICE = 1;
+        public const int Exit = 0;
+        public const int InitialChoice = 1;
     }
 }
