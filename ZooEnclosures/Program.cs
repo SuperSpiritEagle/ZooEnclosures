@@ -82,9 +82,11 @@ namespace ZooEnclosures
 
     static class AnimalHelper
     {
+        private static readonly Random random = new Random();
+       
         public static Animal[] GetAnimalsBySpecies(string species, Animal[] animalList)
         {
-            int count = 2;
+            int count = random.Next(1, 3);
             Animal[] selectedAnimals = new Animal[count];
 
             int index = 0;
@@ -108,16 +110,16 @@ namespace ZooEnclosures
 
     class Animal
     {
-        public string Species { get; }
-        public string Gender { get; }
-        public string Sound { get; }
-
         public Animal(string species, string gender, string sound)
         {
             Species = species;
             Gender = gender;
             Sound = sound;
         }
+
+        public string Species { get; }
+        public string Gender { get; }
+        public string Sound { get; }
 
         public Animal Clone()
         {
@@ -127,15 +129,16 @@ namespace ZooEnclosures
 
     class Enclosure
     {
-        public string Name { get; }
-        public int NumberOfAnimals => Animals.Length;
-        public Animal[] Animals { get; }
+        private Animal[] _animals;
 
         public Enclosure(string name, Animal[] animals)
         {
             Name = name;
-            Animals = animals;
+            _animals = animals;
         }
+
+        public string Name { get; }
+        public int NumberOfAnimals => _animals.Length;
 
         public void DisplayInfo()
         {
@@ -143,7 +146,7 @@ namespace ZooEnclosures
             Console.WriteLine($"Количество животных: {NumberOfAnimals}");
             Console.WriteLine("Животные:");
 
-            foreach (var animal in Animals)
+            foreach (var animal in _animals)
             {
                 Console.WriteLine($"- Вид: {animal.Species}, Пол: {animal.Gender}, Звук: {animal.Sound}");
             }
@@ -152,16 +155,16 @@ namespace ZooEnclosures
 
     class Zoo
     {
-        public Enclosure[] Enclosures { get; }
+        private Enclosure[] _enclosures;
 
         public Zoo(Enclosure[] enclosures)
         {
-            Enclosures = enclosures;
+            _enclosures = enclosures;
         }
 
         public void DisplayEnclosureInfo(int index)
         {
-            Enclosures[index].DisplayInfo();
+            _enclosures[index].DisplayInfo();
         }
     }
 
