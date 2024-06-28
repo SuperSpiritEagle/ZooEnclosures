@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace ZooEnclosures
 {
@@ -83,28 +84,27 @@ namespace ZooEnclosures
     static class AnimalHelper
     {
         private static readonly Random random = new Random();
-       
+
         public static Animal[] GetAnimalsBySpecies(string species, Animal[] animalList)
         {
-            int count = random.Next(1, 3);
-            Animal[] selectedAnimals = new Animal[count];
-
-            int index = 0;
+            int count = random.Next(4, 9);
+            List<Animal> selectedAnimals = new List<Animal>();
 
             foreach (var animal in animalList)
             {
                 if (animal.Species == species)
                 {
-                    selectedAnimals[index++] = animal.Clone();
+                    selectedAnimals.Add(animal.Clone());
+                    selectedAnimals.Add(animal.CloneWithDifferentGender());
 
-                    if (index == count)
+                    if (selectedAnimals.Count >= count)
                     {
                         break;
                     }
                 }
             }
 
-            return selectedAnimals;
+            return selectedAnimals.ToArray();
         }
     }
 
@@ -124,6 +124,12 @@ namespace ZooEnclosures
         public Animal Clone()
         {
             return new Animal(Species, Gender, Sound);
+        }
+
+        public Animal CloneWithDifferentGender()
+        {
+            string newGender = Gender == "Мужской" ? "Женский" : "Мужской";
+            return new Animal(Species, newGender, Sound);
         }
     }
 
